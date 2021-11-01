@@ -8,12 +8,7 @@ export const Path = React.createContext();
 
 const Routes = () => {
     const [ token, setToken ] = useState("");
-
-    useEffect(() => {
-        if(token===""&&localStorage.getItem("loginToken")!==undefined){
-            setToken(localStorage.getItem("loginToken"));
-        }
-    })
+    
     return(
         <Router>
             <Path.Provider value="https://www.superheroapi.com/api.php/10224262264160982/">

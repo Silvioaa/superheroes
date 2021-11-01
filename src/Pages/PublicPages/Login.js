@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Validation } from '../../routes/Routes';
+import Container from '../../Components/Container';
 import axios from 'axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 
@@ -8,8 +9,7 @@ const Login = () => {
     const { token, setToken }= useContext(Validation);
 
     return(
-        <>
-        <div className="container">
+        <Container>
             <h1>INICIAR SESIÓN</h1>
             <Formik
                 initialValues={{
@@ -69,8 +69,7 @@ const Login = () => {
                     </Form>)
                 }   
             </Formik>
-        </div>
-        </>
+        </Container>
     );
 }
 

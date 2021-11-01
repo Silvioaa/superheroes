@@ -2,7 +2,12 @@ import React, { useState, useEffect, useContext } from 'react';
 import { TeamState } from '../../routes/PrivateRoutes';
 import { Validation } from '../../routes/Routes';
 import { Link } from 'react-router-dom';
-import Logout from './Logout';
+import Container from '../../Components/Container';
+import NavBar from '../../Components/NavBar';
+import Card from '../../Components/Card';
+import Grid from '../../Components/Grid';
+import TeamStats from '../../Components/TeamStats';
+import { createCardsData } from '../../Helpers/createCardsData';
 
 const Home = ({ history }) => {
   const { team, setTeam } = useContext(TeamState);
@@ -20,7 +25,7 @@ const Home = ({ history }) => {
     altura:0
   })
 
-  async function handleClick(e){
+  function handleClick(e){
     e.preventDefault();
     let teamValue = team;
     let heroIndex;
@@ -31,12 +36,22 @@ const Home = ({ history }) => {
       }
     })
     teamValue.splice(heroIndex,1);
-    await setTeam(teamValue);
+    setTeam(teamValue);
     setStateToForceReRender((prevState)=>++prevState);
   }
+
+  const teamCardButtons = [
+    {
+      name:"Ver Detalle",
+      linkOrFunction:"/details/"
+    },
+    {
+      name:"Eliminar",
+      linkOrFunction: handleClick
+    }
+  ]
   
   useEffect(() => {
-    console.log(teamCumulative)
       let teamCumulativeValue = {
         inteligencia:0,
         fuerza:0,
@@ -76,7 +91,6 @@ const Home = ({ history }) => {
       averageWeight=team.length===0?0:averageWeight/team.length;
       teamCumulativeValue.altura=averageHeight;
       teamCumulativeValue.peso=averageWeight;
-      console.log(teamCumulativeValue);
 
       let cumulativeOrderValue = Object.entries(teamCumulativeValue);
       let maximumValue = 0;
@@ -92,9 +106,7 @@ const Home = ({ history }) => {
         }
       })
       const firstElement = cumulativeOrderValue.splice(maximumIndex,1);
-      console.log(firstElement)
       cumulativeOrderValue.unshift(firstElement[0]);
-      console.log(cumulativeOrderValue)
       setTeamCumulative(teamCumulativeValue);
       setCumulativeOrder(cumulativeOrderValue);
   },[stateToForceReRender])
@@ -108,67 +120,33 @@ const Home = ({ history }) => {
 
   return (
     <>
-      <div className="container">
-        <Logout/>
+      <NavBar/>
+      <Container>
         
-        <h1>EQUIPO</h1>
-        <Link to="/search">Ir a búsqueda</Link>
-        <div id="cumulative" className="container">
-          <div>
-            <h2>ACUMULATIVO</h2>
-
-            {cumulativeOrder.length!==0&&
-            cumulativeOrder.map((cumulative)=>{
-              if(cumulative[0]==="altura"||cumulative[0]==="peso"){
-                return
-              }
-              return(<span><b>{cumulative[0]}:</b> {cumulative[1]}</span>)
-            })}
-
-            {/* <span><b>Inteligencia:</b> {teamCumulative.intelligence}</span>
-            <span><b>Fuerza:</b> {teamCumulative.strength}</span>
-            <span><b>Velocidad:</b> {teamCumulative.speed}</span>
-            <span><b>Durabilidad:</b> {teamCumulative.durability}</span>
-            <span><b>Poder:</b> {teamCumulative.power}</span>
-            <span><b>Combate:</b> {teamCumulative.combat}</span> */}
-
-            <h3>PROMEDIOS</h3>
-            <span><b>Altura:</b> {teamCumulative.altura}</span>
-            <span><b>Peso:</b> {teamCumulative.peso}</span>
-          </div>
-        </div>
+        <h1 className="display-1 text-primary">EQUIPO</h1>
         
+        
+        <TeamStats
+          cumulativeOrder={cumulativeOrder}
+          teamCumulative={teamCumulative}
+        />
         
           {
             team.length===0
           ?
           <div>No hay miembros en el equipo todavía.</div>
           :
-            <div id="team" className="container">
-              <div className="row">{
-                team.map((hero)=>
-                  <div className="col-6">
-                    <img src={hero.image.url}/>
-                    <h1>{hero.name}</h1>
-                    <div>
-                    <Link to={`/details/${hero.id}`}>Ver Detalle</Link>
-                    <a id={hero.id} href="" onClick={handleClick}>Eliminar</a>
-                    </div>
-                    <span><b>Inteligencia:</b> {hero.powerstats.intelligence}</span>
-                    <span><b>Fuerza:</b> {hero.powerstats.strength}</span>
-                    <span><b>Velocidad:</b> {hero.powerstats.speed}</span>
-                    <span><b>Durabilidad:</b> {hero.powerstats.durability}</span>
-                    <span><b>Poder:</b> {hero.powerstats.power}</span>
-                    <span><b>Combate:</b> {hero.powerstats.combat}</span>
-                  </div>
-                )
-              }
-              </div>
-            </div>
+          <Grid
+            items={team}
+            columns={2}
+            type={1}
+            buttons={teamCardButtons}
+            history={history}
+          />
           }
           
-      </div>   
-    </>
+      </Container>
+    </>  
   );
 }
 
