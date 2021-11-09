@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
 import { Path, Validation } from '../../routes/Routes';
 import Container from '../../Components/Container';
 import NavBar from '../../Components/NavBar';
 import Card from '../../Components/Card';
 import { createCardsData } from '../../Helpers/createCardsData';
+import { checkToken } from '../../Helpers/checkToken';
 import axios from 'axios';
 
 const Details = ({match}) => {
@@ -15,22 +15,19 @@ const Details = ({match}) => {
 
     
 
-useEffect(() => {
-    if(hero===undefined||hero===null){
-        axios.get(`${path}${match.params.id}`)
-        .then((res)=>{
-            const detailsData = createCardsData([res.data],2,[])
-            setHero(detailsData)
-        })
-    }
-})
+    useEffect(() => {
+        if(hero===undefined||hero===null){
+            axios.get(`${path}${match.params.id}`)
+            .then((res)=>{
+                const detailsData = createCardsData([res.data],2,[])
+                setHero(detailsData)
+            })
+        }
+    })
 
-useEffect(() => {
-    if(token!==localStorage.getItem("loginToken")){
-      localStorage.setItem("loginToken","");
-      setToken();
-    }
-  })
+    useEffect(() => {
+        checkToken(token, setToken)
+    })
     
 
     return(
@@ -43,21 +40,21 @@ useEffect(() => {
     
                         hero.items.map((heroItem, index)=>
                             <Card
+                                key={index}
                                 id={heroItem.id}
                                 photo={heroItem.image.url}
                                 title={heroItem.name}
                                 fields={hero.fields[index]}
+                                details={true}
                             />
                         )
                         :
-                        ""
-                        
+                        ""   
                     }
                 </div>
             </Container>
         </>
     );
-
 }
 
 export default Details;

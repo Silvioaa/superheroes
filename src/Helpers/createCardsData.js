@@ -1,6 +1,4 @@
-import Card from '../Components/Card'
-
-export const createCardsData = (items, type, buttons) => {
+export const createCardsData = (items, type) => {
     let fieldsValue = [];
     items.forEach((item)=>{
         if(type===0){

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PrivateRoutes from './PrivateRoutes';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import PublicRoutes from './PublicRoutes';
 
 export const Validation = React.createContext();

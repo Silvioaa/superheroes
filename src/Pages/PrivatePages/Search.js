@@ -1,52 +1,52 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { TeamState } from '../../routes/PrivateRoutes';
+import React, { useContext, useEffect, useState } from 'react';
+import { TeamState, SearchState } from '../../routes/PrivateRoutes';
 import { Path, Validation } from '../../routes/Routes';
-import { Link } from 'react-router-dom';
 import Container from '../../Components/Container';
 import NavBar from '../../Components/NavBar';
 import Grid from '../../Components/Grid';
+import FormComponent from '../../Components/FormComponent';
+import { checkToken } from '../../Helpers/checkToken';
+import { filterNewHero } from '../../Helpers/filterNewHero';
 import axios from 'axios';
-import { Formik, ErrorMessage, Field, Form } from 'formik';
 
 const Search = ({ history }) => {
 
     const { team, setTeam } = useContext(TeamState);
-    const { token, setToken } = useContext(Validation)
+    const { token, setToken } = useContext(Validation);
+    const { search, setSearch } = useContext(SearchState);
     const path = useContext(Path);
-    const [ searchResult, setSearchResult ] = useState([])
+    
+    const initialValues={
+      heroName: ""
+    }
 
-    function handleClick(e){
-      e.preventDefault();
-      if(team.length===0||team.filter((hero)=>hero.id===e.target.id).length===0){
-        if(team.length<6){
-          let heroValue = searchResult.filter((hero)=>{
-            if(hero.id===e.target.id){
-              return true;
-            }
-        });
-        if((team.filter((hero)=>hero.biography.alignment==="bad").length<3&&heroValue[0].biography.alignment==="bad")||
-        (team.filter((hero)=>hero.biography.alignment==="good").length<3&&heroValue[0].biography.alignment==="good")){
-          let searchResultValue = searchResult;
-          searchResultValue = searchResultValue.filter((hero)=>{
-            if(hero.id!==e.target.id){
-              return true;
-            }
-          })
-          setTeam([...team,heroValue[0]]);
-          setSearchResult(searchResultValue);
-        }else if(heroValue[0].biography.alignment!=="good"&&heroValue[0].biography.alignment!=="bad"){
-          alert("En el equipo solamente pueden agregarse personajes que sean buenos o malos.");
-        }else{
-          alert("En el equipo solamente pueden agregarse hasta tres miembros buenos y hasta tres miembros malos. Estás agregando uno de más.");
-        }
-      }else{
-        alert("El equipo puede tener hasta 6 miembros");
-      }
+    function submitFunction(values,{resetForm}){
+      axios({
+        method: 'get',
+        url: `${path}search/${values.heroName}`
+      })
+        .then((res)=>{
+          if(res.data.error){
+            alert(res.data.error);
+            setSearch([]);
+            resetForm();
+          }else if(res.data.results!==undefined){
+            let searchValue = res.data.results;
+            setSearch(searchValue);
+          }
+        })
+        .catch((err)=>{
+          alert(err);
+          resetForm()
+        })
+    }
 
-      }else{
-        alert("Este superhéroe ya está agregado al equipo.")
+    function validateFunction(values){
+      let errors = {}
+      if(!values.heroName){
+        errors.heroName = "Por favor ingresar un nombre de personaje para buscar."
       }
-  
+      return errors;
     }
 
       const searchButtons = [
@@ -56,77 +56,39 @@ const Search = ({ history }) => {
         }
       ];
 
+      function handleClick(e){
+        filterNewHero(e, team, setTeam, search, setSearch);
+      }
+
       useEffect(() => {
-        if(token!==localStorage.getItem("loginToken")){
-          localStorage.setItem("loginToken","");
-          setToken();
-        }
+        checkToken(token, setToken)
       })
 
     return(
       <>
-        <NavBar/>
+        <NavBar
+          section="search"
+        />
         <Container>
           <h1 className="display-1 text-primary m-3">BUSCADOR</h1>
           
-          <Formik
-            initialValues={{
-              heroName: ""
-            }}
-            onSubmit={(values,{resetForm})=>{
-              axios({
-                method: 'get',
-                url: `${path}search/${values.heroName}`
-              })
-                .then((res)=>{
-                  console.log(res.data)
-                  if(res.data.error){
-                    alert(res.data.error);
-                    setSearchResult([]);
-                    resetForm();
-                  }else if(res.data.results!==undefined){
-                    let searchResultValue = res.data.results;
-                    setSearchResult(searchResultValue);
-                  }
-                })
-                .catch((err)=>{
-                  alert(err);
-                  resetForm()
-                })
-            }}
-            validate={(values)=>{
-              let errors = {}
-              if(!values.heroName){
-                errors.heroName = "Por favor ingresar un nombre de personaje para buscar."
-              }
-              return errors;
-            }}
-          >
-            {({errors})=>(
-              <Form className="d-flex flex-column">
-                <div>
-                  <Field className="form-control" name="heroName" type="text" placeholder="Ingresa un nombre para buscar"/>
-                </div>
-                <div className="error">
-                  <ErrorMessage name="heroName" component={()=><span className="text-danger">{errors.heroName}</span>}/>
-                </div>
-                <input className="btn btn-primary mt-3 mb-5" type="submit" value="Buscar"/>
-              </Form>
-            )}
-            
-          </Formik>
-        {
-          searchResult.length!==0&&
-
-          <Grid
-            items={searchResult}
-            columns={3}
-            type={0}
-            buttons={searchButtons}
-            history={history}
+          <FormComponent
+            initialValues={initialValues}
+            submitFunction={submitFunction}
+            validateFunction={validateFunction}
+            submit={"Buscar"}
           />
-        }
+          {
+            search.length!==0&&
 
+            <Grid
+              items={search}
+              type={0}
+              buttons={searchButtons}
+              history={history}
+              search={true}
+            />
+          }
         </Container>
       </>
     );
