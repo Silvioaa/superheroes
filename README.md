@@ -1,3 +1,11 @@
+# Superheroes
+
+This application enables you to browse for superheroes and supervillains, consuming the [Superhero API](https://superheroapi.com/). You can also use the app to create a team of up to 6 characters, composed of up to 3 heroes and 3 villains, and get statistics of each of them related to their capacity (speed, strength, etc.), as well as the same stats of the whole team combined. Finally, it's possible to retrieve information about the appearance of each team member separately (height, weight, eye color, etc.). 
+
+Also, in order to access the app, it's necessary to log in with an email and password that are authenticated through an api rest query. When the login is successful, the api returns a token that is used to protect the access to each page. Whenever the token, stored in localHost, doesn't match with the token returned by the api, the app redirects the user to the login page.
+
+I used [Formik](https://formik.org/) to create the forms, [Bootstrap](https://getbootstrap.com/) for most of the styles, [Axios](https://axios-http.com/) to make the api rest queries and [Rreact Router](https://v5.reactrouter.com/) to handle the routing.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
