@@ -1,4 +1,5 @@
 import React from 'react';
+import image from'../Images/imageNotAvailable.png';
 
 const Card = ({
     id,
@@ -11,15 +12,17 @@ const Card = ({
     search=false
 }) => {
 
+    const imgRef = useRef();
+
     function imageError(e){
-        e.target.src = "./imageNotAvailable.png";
+        e.target.src = image;
     }
 
     return(
         <div className={details===true?"col-12 col-md-8":"col-sm-12 col-md-6 col-lg-4 mb-3"}>
             <div className="card h-100">
                 <div className="card-body text-center p-3 d-flex flex-column">
-                    <img alt="" onError={imageError} className={`card-img-top ${search===true?"h-75":"h-50"} w-100`} src={photo}/>
+                    <img  alt="" onError={imageError} className={`card-img-top ${search===true?"h-75":"h-50"} w-100`} src={photo}/>
                     <h1 className="card-title text-primary display-6">{title}</h1>
                     <div className="card-text">
                     {
