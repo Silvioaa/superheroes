@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/index.css"],"names":[],"mappings":"AACA,yBAEE,gBACE,cACF,CAEF","file":"main.93c56445.chunk.css","sourcesContent":["\n@media (max-width:438px) {\n\n  #cumulative > div{\n    max-width: 13em;\n  }\n\n}\n\n.error-div{\n  /* bottom: 2em; */\n}"]}
