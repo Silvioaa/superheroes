@@ -22,7 +22,8 @@ const initialState = {
         combat:0,
     },
     cumulativeOrder:[],
-    path: "https://www.superheroapi.com/api.php/10224262264160982/"
+    path: "https://www.superheroapi.com/api.php/10224262264160982/",
+    loginPath: "https://node-api-proxy-alkemy.herokuapp.com/"
 }
 
 export const reducer = (state=initialState, action) => {

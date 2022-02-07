@@ -91,11 +91,11 @@ export function setCumulativeOrder(cumulativeOrder){
 
 /* ---- Thunks ---- */
 
-export const login = (loginData)=>(dispatch)=>{
+export const login = (loginData)=>(dispatch, getState)=>{
     dispatch(startQuery());
     axios({
         method:"post",
-        url:"http://challenge-react.alkemy.org/",
+        url:getState().loginPath,
         data:{
             email: loginData.email,
             password: loginData.password
