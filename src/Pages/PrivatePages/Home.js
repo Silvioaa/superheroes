@@ -1,29 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { TeamState } from '../../routes/PrivateRoutes';
-import { Validation } from '../../routes/Routes';
+import React, { useState, useEffect } from 'react';
 import Container from '../../Components/Container';
 import NavBar from '../../Components/NavBar';
 import Grid from '../../Components/Grid';
 import TeamStats from '../../Components/TeamStats';
 import { checkToken } from '../../Helpers/checkToken';
+import { useSelector, useDispatch } from 'react-redux';
+import { setToken, eraseHero } from '../../redux/actions';
 
 const Home = ({ history }) => {
-  const { team, setTeam } = useContext(TeamState);
-  const { token, setToken } = useContext(Validation)
+
+  const token = useSelector(state => state.token);
+  const team = useSelector(state => state.team);
+  const dispatch = useDispatch()
   const [ stateToForceReRender, setStateToForceReRender ] = useState(0);
 
   function handleClick(e){
     e.preventDefault();
-    let teamValue = team;
-    let heroIndex;
-    teamValue.forEach((hero, index)=>{
-      if(hero.id===e.target.id){
-        heroIndex = index;
-        return;
-      }
-    })
-    teamValue.splice(heroIndex,1);
-    setTeam(teamValue);
+    dispatch(eraseHero(e.target.id))
     setStateToForceReRender((prevState)=>++prevState);
   }
 
@@ -39,8 +32,8 @@ const Home = ({ history }) => {
   ]
 
   useEffect(() => {
-    checkToken(token, setToken)
-  })
+    checkToken(dispatch, token, setToken)
+  },[])
 
   return (
     <>

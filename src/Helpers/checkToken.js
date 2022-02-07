@@ -1,6 +1,5 @@
-export const checkToken = (token, setToken) => {
+export const checkToken = (dispatch, token, setToken) => {
     if(token!==localStorage.getItem("loginToken")){
-        localStorage.setItem("loginToken","");
-        setToken();
+        dispatch(setToken(""));
       }
 }
