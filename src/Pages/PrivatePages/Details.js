@@ -6,27 +6,25 @@ import Card from '../../Components/Card';
 import { createCardsData } from '../../Helpers/createCardsData';
 import { checkToken } from '../../Helpers/checkToken';
 import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { getDetail, setToken, setDetail } from '../../redux/actions';
 
 const Details = ({match}) => {
 
-    const [ hero, setHero ] = useState();
-    const path = useContext(Path)
-    const { token, setToken } = useContext(Validation)
+    const detail = useSelector(state => state.detail);
+    const token = useSelector(state => state.token);
+    const dispatch = useDispatch();
+    const id = match.params.id
 
+    useEffect(() => {
+        if(detail===undefined||detail===null||detail.items[0].id!==id){
+            dispatch(getDetail(id))
+        }
+    })
     
 
     useEffect(() => {
-        if(hero===undefined||hero===null){
-            axios.get(`${path}${match.params.id}`)
-            .then((res)=>{
-                const detailsData = createCardsData([res.data],2,[])
-                setHero(detailsData)
-            })
-        }
-    })
-
-    useEffect(() => {
-        checkToken(token, setToken)
+        checkToken(dispatch, token, setToken)
     })
     
 
@@ -36,15 +34,16 @@ const Details = ({match}) => {
             <Container>
                 <div className="mt-5 d-flex justify-content-center align-items-center">
                     {
-                        hero!==null&&hero!==undefined?
-    
-                        hero.items.map((heroItem, index)=>
+                        detail!==null&&detail!==undefined&&
+                        detail.items[0].id===id?
+                        
+                        detail.items.map((detailItem, index)=>
                             <Card
                                 key={index}
-                                id={heroItem.id}
-                                photo={heroItem.image.url}
-                                title={heroItem.name}
-                                fields={hero.fields[index]}
+                                id={detailItem.id}
+                                photo={detailItem.image.url}
+                                title={detailItem.name}
+                                fields={detail.fields[index]}
                                 details={true}
                             />
                         )

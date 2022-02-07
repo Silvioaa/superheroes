@@ -1,44 +1,31 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { TeamState, SearchState } from '../../routes/PrivateRoutes';
-import { Path, Validation } from '../../routes/Routes';
+import React, { useEffect } from 'react';
 import Container from '../../Components/Container';
 import NavBar from '../../Components/NavBar';
 import Grid from '../../Components/Grid';
 import FormComponent from '../../Components/FormComponent';
 import { checkToken } from '../../Helpers/checkToken';
 import { filterNewHero } from '../../Helpers/filterNewHero';
-import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeSearch, setTeam, setSearch, setToken } from '../../redux/actions';
 
 const Search = ({ history }) => {
 
-    const { team, setTeam } = useContext(TeamState);
-    const { token, setToken } = useContext(Validation);
-    const { search, setSearch } = useContext(SearchState);
-    const path = useContext(Path);
+    const team = useSelector(state => state.team);
+    const token = useSelector(state => state.token);
+    const search = useSelector (state => state.search);
+
+    const dispatch = useDispatch();
     
     const initialValues={
       heroName: ""
     }
 
     function submitFunction(values,{resetForm}){
-      axios({
-        method: 'get',
-        url: `${path}search/${values.heroName}`
-      })
-        .then((res)=>{
-          if(res.data.error){
-            alert(res.data.error);
-            setSearch([]);
-            resetForm();
-          }else if(res.data.results!==undefined){
-            let searchValue = res.data.results;
-            setSearch(searchValue);
-          }
-        })
-        .catch((err)=>{
-          alert(err);
-          resetForm()
-        })
+      const searchData = {
+        heroName: values.heroName,
+        resetForm
+      }
+      dispatch(makeSearch(searchData))
     }
 
     function validateFunction(values){
@@ -57,12 +44,13 @@ const Search = ({ history }) => {
       ];
 
       function handleClick(e){
-        filterNewHero(e, team, setTeam, search, setSearch);
+        e.preventDefault()
+        filterNewHero(e.target.id, dispatch, team, setTeam, search, setSearch);
       }
 
       useEffect(() => {
-        checkToken(token, setToken)
-      })
+        checkToken(dispatch, token, setToken)
+      },[])
 
     return(
       <>

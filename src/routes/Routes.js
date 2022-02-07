@@ -1,27 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PrivateRoutes from './PrivateRoutes';
 import { HashRouter as Router } from 'react-router-dom';
 import PublicRoutes from './PublicRoutes';
+import { useSelector } from 'react-redux';
 
 export const Validation = React.createContext();
 export const Path = React.createContext();
 
 const Routes = () => {
-    const [ token, setToken ] = useState("");
     
+    const token = useSelector(state => state.token);
+
     return(
         <Router>
-            <Path.Provider value="https://www.superheroapi.com/api.php/10224262264160982/">
-                <Validation.Provider value={{token, setToken}}>
-                    {
-                        token!==""&&localStorage.getItem("loginToken")===token
-                        ?
-                        <PrivateRoutes/>
-                        :
-                        <PublicRoutes/>
-                    }
-                </Validation.Provider>
-            </Path.Provider>
+            {
+                token!==""&&localStorage.getItem("loginToken")===token
+                ?
+                <PrivateRoutes/>
+                :
+                <PublicRoutes/>
+            }
         </Router>
     );
 

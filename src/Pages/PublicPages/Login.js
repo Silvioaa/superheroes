@@ -1,12 +1,10 @@
-import React, { useContext } from 'react';
-import { Validation } from '../../routes/Routes';
+import React from 'react';
 import Container from '../../Components/Container';
 import FormComponent from '../../Components/FormComponent';
-import axios from 'axios';
-
+import { login } from '../../redux/actions';
+import store from '../../redux/store';
 
 const Login = () => {
-    const { token, setToken }= useContext(Validation);
 
     const initialValues = {
         mail:"",
@@ -14,22 +12,13 @@ const Login = () => {
     }
 
     function submitFunction(values, { resetForm }){ 
-        axios({
-            method:"post",
-            url:"http://challenge-react.alkemy.org/",
-            data:{
-                email: values.mail,
-                password: values.pass
-            }
-        })
-        .then((res)=>{
-            localStorage.setItem("loginToken", res.data.token);
-            setToken(res.data.token);
-        })
-        .catch((err)=>{
-            alert(err);
-            resetForm();
-        });
+        const loginData = {
+            email: values.mail,
+            password: values.pass,
+            resetForm: resetForm
+        }
+
+        store.dispatch(login(loginData));
     }
 
     function validateFunction(values){
