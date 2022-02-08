@@ -7,8 +7,8 @@ import store from '../../redux/store';
 const Login = () => {
 
     const initialValues = {
-        mail:"",
-        pass:""
+        mail:"silvio.acevedo@gmail.com",
+        pass:"react"
     }
 
     function submitFunction(values, { resetForm }){ 
