@@ -12,8 +12,6 @@ const Card = ({
     search=false
 }) => {
 
-    const imgRef = useRef();
-
     function imageError(e){
         e.target.src = image;
     }
